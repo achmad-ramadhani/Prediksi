@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PERDIKSI LIGA</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #00051d;
+      color: #ddd;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #2c2f38;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #ffcc00;
+    }
+    .form-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+    }
+    fieldset {
+      flex: 1 1 350px;
+      margin: 10px;
+      padding: 15px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #333;
+      min-width: 280px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #ccc;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #444;
+      color: #fff;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      background: #0088ff;
+      color: rgb(255, 255, 255);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background: #0088ff;
+      transform: scale(1.05);
+    }
+    #resultArea {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+      color: #eee;
+      background: #333;
+      padding: 10px;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+    #accuracyArea {
+      margin-top: 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      color: #ff7b00;
+    }
+    #percentTable {
+      margin: 20px auto 0 auto;
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      background: #333;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    #percentTable th, #percentTable td {
+      padding: 12px 15px;
+      border: 1px solid #444;
+      text-align: center;
+      color: #ddd;
+    }
+    #percentTable thead {
+      background-color: #444;
+    }
+    #history {
+      margin-top: 30px;
+      color: #ccc;
+      max-height: 220px;
+      overflow-y: auto;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+    }
+    #history h3 {
+      margin-bottom: 10px;
+      color: #ffcc00;
+    }
+    #historyTable {
+      width: 100%;
+      border-collapse: collapse;
+      background: #333;
+      border-radius: 6px;
+      table-layout: fixed;
+    }
+    #historyTable th, #historyTable td {
+      border: 1px solid #444;
+      padding: 6px 8px;
+      font-size: 14px;
+      text-align: center;
+      color: #ddd;
+      word-wrap: break-word;
+    }
+    #historyTable thead {
+      background-color: #444;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    canvas {
+      margin-top: 25px;
+      max-width: 100%;
+      background: #222;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    @media (max-width: 700px) {
+      .form-container {
+        flex-direction: column;
+      }
+      fieldset {
+        margin: 10px 0;
+      }
+      #historyTable th, #historyTable td {
+        font-size: 12px;
+        padding: 4px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h2>PERDIKSI LIGA SEPAK BOLA</h2>
+    <form id="prediksiForm" onsubmit="event.preventDefault(); predict();">
+      <div class="form-container">
+        <fieldset>
+          <legend><b>Tim A (Home)</b></legend>
+          <label for="nameA">Nama Tim</label>
+          <input type="text" id="nameA" placeholder="Masukkan Nama Tim A" />
+          <label for="gfA">Gol</label>
+          <input type="number" step="0.1" id="gfA" />
+          <label for="gaA">Kebobolan</label>
+          <input type="number" step="0.1" id="gaA" />
+          <label for="posA">Posisi Klasemen</label>
+          <input type="number" id="posA" min="1" max="20" />
+          <label for="winA">Menang H2H</label>
+          <input type="number" id="winA" />
+          <label for="drawA">Seri H2H</label>
+          <input type="number" id="drawA" />
+          <label for="lossA">Kalah H2H</label>
+          <input type="number" id="lossA" />
+        </fieldset>
+        <fieldset>
+          <legend><b>Tim B (Away)</b></legend>
+          <label for="nameB">Nama Tim</label>
+          <input type="text" id="nameB" placeholder="Masukkan Nama Tim B" />
+          <label for="gfB">Gol</label>
+          <input type="number" step="0.1" id="gfB" />
+          <label for="gaB">Kebobolan</label>
+          <input type="number" step="0.1" id="gaB" />
+          <label for="posB">Posisi Klasemen</label>
+          <input type="number" id="posB" min="1" max="20" />
+          <label for="winB">Menang H2H</label>
+          <input type="number" id="winB" />
+          <label for="drawB">Seri H2H</label>
+          <input type="number" id="drawB" />
+          <label for="lossB">Kalah H2H</label>
+          <input type="number" id="lossB" />
+        </fieldset>
+      </div>
+      <button type="submit">Prediksi</button>
+    </form>
+
+    <div id="resultArea" style="display:none;"></div>
+    <div id="accuracyArea" style="display:none;"></div>
+
+    <table id="percentTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Hasil</th>
+          <th id="teamACol">Tim A</th>
+          <th>Seri</th>
+          <th id="teamBCol">Tim B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Persentase Kemenangan</td>
+          <td id="winAPercent">-</td>
+          <td id="drawPercent">-</td>
+          <td id="winBPercent">-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <canvas id="goalChart" style="display:none;"></canvas>
+
+    <div id="history" style="display:none;">
+      <h3>Riwayat Prediksi:</h3>
+      <table id="historyTable" >
+        <thead>
+          <tr>
+            <th>Tanggal & Waktu</th>
+            <th>Tim A</th>
+            <th>Tim B</th>
+            <th>Prediksi</th>
+            <th>Gol Tim A</th>
+            <th>Gol Tim B</th>
+            <th>Menang Tim A (%)</th>
+            <th>Seri (%)</th>
+            <th>Menang Tim B (%)</th>
+          </tr>
+        </thead>
+        <tbody id="historyList"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    function calcTSS(gf, ga, homeBonus, win, draw, loss, position) {
+      const h2hScore = (win - loss) / 5;
+      const standingScore = (20 - position) / 20;
+      return (gf * 0.4) - (ga * 0.3) + homeBonus + (h2hScore * 0.2) + (standingScore * 0.1);
+    }
+
+    let chartInstance = null;
+
+    function getAccuracyDescription(diffAbs) {
+      if (diffAbs > 1.5) {
+        return 'Tingkat Keakuratan: Tinggi (80%)';
+      } else if (diffAbs > 0.7) {
+        return 'Tingkat Keakuratan: Sedang (65%)';
+      } else {
+        return 'Tingkat Keakuratan: Rendah (45%)';
+      }
+    }
+
+    function predict() {
+      const nameA = document.getElementById('nameA').value.trim() || 'Tim A';
+      const gfA = parseFloat(document.getElementById('gfA').value) || 0;
+      const gaA = parseFloat(document.getElementById('gaA').value) || 0;
+      const posA = parseInt(document.getElementById('posA').value) || 20;
+      const winA = parseInt(document.getElementById('winA').value) || 0;
+      const drawA = parseInt(document.getElementById('drawA').value) || 0;
+      const lossA = parseInt(document.getElementById('lossA').value) || 0;
+
+      const nameB = document.getElementById('nameB').value.trim() || 'Tim B';
+      const gfB = parseFloat(document.getElementById('gfB').value) || 0;
+      const gaB = parseFloat(document.getElementById('gaB').value) || 0;
+      const posB = parseInt(document.getElementById('posB').value) || 20;
+      const winB = parseInt(document.getElementById('winB').value) || 0;
+      const drawB = parseInt(document.getElementById('drawB').value) || 0;
+      const lossB = parseInt(document.getElementById('lossB').value) || 0;
+
+      if (posA < 1 || posA > 20 || posB < 1 || posB > 20) {
+        alert('Posisi harus antara 1 dan 20');
+        return;
+      }
+
+      const tssA = calcTSS(gfA, gaA, 0.5, winA, drawA, lossA, posA);
+      const tssB = calcTSS(gfB, gaB, -0.3, winB, drawB, lossB, posB);
+
+      const diff = tssA - tssB;
+      const diffAbs = Math.abs(diff);
+
+      const scoreWinA = Math.max(diff, 0);
+      const scoreWinB = Math.max(-diff, 0);
+      const scoreDraw = 0.5;
+
+      const sumScores = scoreWinA + scoreWinB + scoreDraw;
+
+      const winAPercent = ((scoreWinA / sumScores) * 100).toFixed(1);
+      const winBPercent = ((scoreWinB / sumScores) * 100).toFixed(1);
+      const drawPercent = ((scoreDraw / sumScores) * 100).toFixed(1);
+
+      const averageGoalsA = gfA;
+      const averageGoalsB = gfB;
+
+      const predictedGoalsA = (gfA + gaB) / 2;
+      const predictedGoalsB = (gfB + gaA) / 2;
+
+      let predictionText = '';
+      if (diffAbs < 0.2) {
+        predictionText = 'Seri';
+      } else if (diff > 0.2) {
+        predictionText = `${nameA} Menang`;
+      } else {
+        predictionText = `${nameB} Menang`;
+      }
+
+      const accuracyText = getAccuracyDescription(diffAbs);
+
+      const result = {
+        nameA,
+        tssA: tssA.toFixed(2),
+        averageGoalsA: averageGoalsA.toFixed(2),
+        predictedGoalsA: predictedGoalsA.toFixed(2),
+
+        nameB,
+        tssB: tssB.toFixed(2),
+        averageGoalsB: averageGoalsB.toFixed(2),
+        predictedGoalsB: predictedGoalsB.toFixed(2),
+
+        prediction: predictionText,
+        winAPercent,
+        winBPercent,
+        drawPercent,
+        accuracyText,
+        timestamp: Date.now()
+      };
+
+      saveHistory(result);
+      displayResult(result);
+      displayPercentTable(result);
+      displayAccuracy(result.accuracyText);
+      displayChart(result.predictedGoalsA, result.predictedGoalsB);
+      displayHistory();
+    }
+
+    function displayAccuracy(accuracyText) {
+      const accuracyArea = document.getElementById('accuracyArea');
+      accuracyArea.style.display = 'block';
+      accuracyArea.textContent = accuracyText;
+    }
+
+    function saveHistory(result) {
+      let history = JSON.parse(localStorage.getItem('history')) || [];
+      history.push(result);
+      if (history.length > 10) history.shift();
+      localStorage.setItem('history', JSON.stringify(history));
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('history');
+      displayHistory();
+      document.getElementById('resultArea').style.display = 'none';
+      document.getElementById('accuracyArea').style.display = 'none';
+      document.getElementById('percentTable').style.display = 'none';
+      const canvas = document.getElementById('goalChart');
+      canvas.style.display = 'none';
+    }
+
+    function displayResult(result) {
+      const resultArea = document.getElementById('resultArea');
+      resultArea.style.display = 'block';
+      resultArea.innerText =
+        `TSS ${result.nameA}: ${result.tssA} | TSS ${result.nameB}: ${result.tssB}\n` +
+        `Rata-rata Gol:\n` +
+        `  ${result.nameA}: ${result.averageGoalsA}\n` +
+        `  ${result.nameB}: ${result.averageGoalsB}\n` +
+        `Prediksi Gol yang Akan Terjadi:\n` +
+        `  ${result.nameA}: ${result.predictedGoalsA}\n` +
+        `  ${result.nameB}: ${result.predictedGoalsB}\n` +
+        `Prediksi Akhir: ${result.prediction}`;
+    }
+
+    function displayPercentTable(result) {
+      const table = document.getElementById('percentTable');
+      table.style.display = 'table';
+      document.getElementById('teamACol').innerText = result.nameA;
+      document.getElementById('teamBCol').innerText = result.nameB;
+      document.getElementById('winAPercent').innerText = `${result.winAPercent} %`;
+      document.getElementById('winBPercent').innerText = `${result.winBPercent} %`;
+      document.getElementById('drawPercent').innerText = `${result.drawPercent} %`;
+    }
+
+    function displayHistory() {
+      const history = JSON.parse(localStorage.getItem('history')) || [];
+      const historyContainer = document.getElementById('history');
+      const historyList = document.getElementById('historyList');
+
+      if (history.length > 0) {
+        historyContainer.style.display = 'block';
+        historyList.innerHTML = '';
+        history.slice().reverse().forEach((item) => {
+          const date = new Date(item.timestamp);
+          const dateString = date.toLocaleString();
+          historyList.innerHTML += `
+            <tr>
+              <td>${dateString}</td>
+              <td>${item.nameA}</td>
+              <td>${item.nameB}</td>
+              <td>${item.prediction}</td>
+              <td>${item.predictedGoalsA}</td>
+              <td>${item.predictedGoalsB}</td>
+              <td>${item.winAPercent} %</td>
+              <td>${item.drawPercent} %</td>
+              <td>${item.winBPercent} %</td>
+            </tr>`;
+        });
+      } else {
+        historyContainer.style.display = 'none';
+      }
+    }
+
+    function displayChart(goalsA, goalsB) {
+      const canvas = document.getElementById('goalChart');
+      canvas.style.display = 'block';
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const ctx = canvas.getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Tim A', 'Tim B'],
+          datasets: [{
+            label: 'Prediksi Gol',
+            data: [goalsA, goalsB],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Jumlah Gol'
+              }
+            }
+          },
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Prediksi Gol Tim A dan Tim B'
+            },
+          }
+        }
+      });
+    }
+
+    window.onload = function() {
+      displayHistory();
+    }
+  </script>
+</body>
+</html>

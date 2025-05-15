@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Selamat Datang di Prediksi Liga Sepak Bola</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: linear-gradient(to right, #1a1a1a, #2c2f38);
+      color: #ddd;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      overflow: auto; /* Allow scrolling if content overflows */
+    }
+    .container {
+      background: rgba(44, 47, 56, 0.9);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      width: 100%; /* Make the container responsive */
+      max-height: 90vh; /* Limit height for better visibility */
+      overflow-y: auto; /* Allow vertical scrolling */
+      transition: transform 0.3s ease;
+    }
+    .container:hover {
+      transform: scale(1.02);
+    }
+    h1 {
+      font-size: 36px;
+      color: #ffcc00;
+      margin-bottom: 10px; /* Reduced margin for better spacing */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    .main-title {
+      font-size: 28px;
+      color: #ffcc00;
+      margin: 10px 0; /* Reduced margin for better spacing */
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 20px; /* Reduced margin for better spacing */
+      line-height: 1.5;
+    }
+    .start-title {
+      font-size: 24px;
+      color: #ffcc00;
+      margin: 20px 0;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    a {
+      text-decoration: none;
+      background: #ffcc00;
+      color: #1a1a1a;
+      padding: 15px 30px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    a:hover {
+      background: #e6b800;
+      transform: scale(1.05);
+    }
+    .advantages, .disadvantages, .accuracy {
+      margin-top: 20px; /* Reduced margin for better spacing */
+      text-align: left;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    h2 {
+      color: #ffcc00;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ffcc00;
+      padding-bottom: 5px;
+    }
+    ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #ccc;
+      font-style: italic;
+    }
+
+    /* Media Queries for Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 28px; /* Smaller font size for smaller screens */
+      }
+      .main-title {
+        font-size: 24px; /* Smaller font size for smaller screens */
+      }
+      p, .start-title {
+        font-size: 16px; /* Smaller font size for smaller screens */
+      }
+      a {
+        padding: 10px 20px; /* Smaller padding for buttons */
+        font-size: 16px; /* Smaller font size for buttons */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Selamat Datang di Prediksi Liga Sepak Bola</h1>
+    <div class="main-title">Alat Prediksi Hasil Pertandingan</div>
+    <p>Gunakan alat ini untuk memprediksi hasil pertandingan sepak bola berdasarkan statistik tim.</p>
+    
+    <div class="start-title">Siap untuk memulai prediksi?</div>
+    <a href="prediksi.html">Mulai Prediksi</a>
+
+    <div class="advantages">
+      <h2>Kelebihan:</h2>
+      <ul>
+        <li>Menggunakan data statistik untuk memberikan prediksi yang lebih akurat.</li>
+        <li>Mudah digunakan dengan antarmuka yang intuitif.</li>
+        <li>Menyediakan riwayat prediksi untuk analisis lebih lanjut.</li>
+        <li>Memberikan visualisasi hasil prediksi melalui grafik.</li>
+      </ul>
+    </div>
+
+    <div class="disadvantages">
+      <h2>Kekurangan:</h2>
+      <ul>
+        <li>Prediksi tidak selalu akurat dan tergantung pada data yang dimasukkan.</li>
+        <li>Hasil dapat dipengaruhi oleh faktor eksternal yang tidak terukur, seperti cedera pemain.</li>
+        <li>Memerlukan pemahaman dasar tentang statistik untuk interpretasi hasil.</li>
+        <li>Hanya mencakup data yang tersedia dan tidak mempertimbangkan faktor lain seperti kondisi cuaca.</li>
+      </ul>
+    </div>
+
+    <div class="accuracy">
+      <h2>Tingkat Keakuratan:</h2>
+      <ul>
+        <li><b>Tinggi (80%)</b>: Prediksi sangat akurat, perbedaan hasil yang kecil.</li>
+        <li><b>Sedang (65%)</b>: Prediksi cukup akurat, perbedaan hasil yang moderat.</li>
+        <li><b>Rendah (45%)</b>: Prediksi kurang akurat, perbedaan hasil yang signifikan.</li>
+      </ul>
+    </div>
+
+    <footer>
+      Aplikasi ini dibuat oleh Achmad Ramadhani
+    </footer>
+  </div>
+</body>
+</html>
