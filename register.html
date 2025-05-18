@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Registrasi - Prediksi Liga Sepak Bola</title>
+<style>
+  /* Reset dan dasar */
+  * {margin: 0; padding: 0; box-sizing: border-box;}
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #eee;
+    user-select: none;
+    padding: 20px;
+  }
+  .container {
+    background: rgba(30, 28, 44, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(66, 66, 66, 0.8);
+    padding: 40px 50px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 2.4rem;
+    margin-bottom: 4px;
+    color: #ffc107;
+    text-shadow: 0 0 15px #ffb300;
+  }
+  .subtitle {
+    color: #bbb;
+    margin-bottom: 28px;
+    font-size: 1rem;
+  }
+  form {
+    text-align: left;
+    margin-bottom: 30px;
+  }
+  .input-group {
+    position: relative;
+    margin-bottom: 22px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #ccc;
+    user-select: text;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    border-radius: 8px;
+    border: none;
+    background: #2f2b46;
+    color: #f0f0f0;
+    font-size: 1rem;
+    box-shadow: inset 2px 2px 6px #1a1830, inset -2px -2px 6px #423f55;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    background: #443f66;
+    box-shadow: 0 0 8px #ffb300;
+    outline: none;
+  }
+  .input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #ffc107;
+    opacity: 0.8;
+  }
+  button {
+    width: 100%;
+    background: #ffb300;
+    color: #201f26;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 14px 0;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 6px 14px -2px #ffb300aa;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: #ffca28;
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+  .message {
+    font-size: 0.95rem;
+    min-height: 22px;
+    margin-top: 4px;
+    text-align: center;
+  }
+  .message.error {
+    color: #f44336;
+  }
+  .message.success {
+    color: #4caf50;
+  }
+  .login-link {
+    margin-top: 18px;
+    text-align: center;
+  }
+  .login-link a {
+    color: #ffc107;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 440px) {
+    .container {
+      padding: 30px 20px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Form Registrasi Prediksi Liga Sepak Bola">
+    <h1>Registrasi</h1>
+    <p class="subtitle">Buat akun baru jika belum punya</p>
+    <form id="registerForm" autocomplete="off">
+      <div class="input-group">
+        <label for="regUsername">Username</label>
+        <input id="regUsername" name="regUsername" type="text" placeholder="Username baru" required aria-required="true" />
+        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <div class="input-group">
+        <label for="regPassword">Password</label>
+        <input id="regPassword" name="regPassword" type="password" placeholder="Password baru" required aria-required="true" />
+        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a2 2 0 10.001-3.999A2 2 0 0012 17zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zm-7 0V7a3 3 0 016 0v3z"/></svg>
+      </div>
+      <button type="submit" aria-label="Register Button">Daftar</button>
+      <div class="message" id="registerMessage"></div>
+    </form>
+    <div class="login-link">
+      Sudah punya akun? <a href="index.html">Login di sini</a>
+    </div>
+  </div>
+
+<script type="module">
+  import { initDB, tambahUser } from './db.js';
+
+  const registerForm = document.getElementById("registerForm");
+  const registerMessage = document.getElementById("registerMessage");
+  let dbReady = false;
+
+  initDB().then(() => {
+    dbReady = true;
+  }).catch(err => {
+    registerMessage.classList.remove('success');
+    registerMessage.classList.add('error');
+    registerMessage.textContent = "Gagal inisialisasi database: " + err;
+  });
+
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    registerMessage.textContent = "";
+    registerMessage.classList.remove('success', 'error');
+    if (!dbReady) {
+      registerMessage.classList.add('error');
+      registerMessage.textContent = "Database belum siap. Silakan coba sebentar lagi.";
+      return;
+    }
+    const username = registerForm.regUsername.value.trim();
+    const password = registerForm.regPassword.value;
+    if (!username || !password) {
+      registerMessage.classList.add('error');
+      registerMessage.textContent = "Isikan username dan password";
+      return;
+    }
+    try {
+      await tambahUser(username, password);
+      registerMessage.classList.add('success');
+      registerMessage.textContent = "Berhasil membuat akun. Silakan login.";
+      registerForm.reset();
+    } catch (err) {
+      registerMessage.classList.add('error');
+      registerMessage.textContent = err;
+    }
+  });
+</script>
+</body>
+</html>
