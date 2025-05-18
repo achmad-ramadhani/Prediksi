@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Prediksi Liga Sepak Bola - Login dengan DB Lokal</title>
+<style>
+  /* Reset dan dasar */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #eee;
+    user-select: none;
+  }
+  .container {
+    background: rgba(30, 28, 44, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(66, 66, 66, 0.8);
+    padding: 40px 50px;
+    width: 320px;
+    text-align: center;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 2.4rem;
+    margin-bottom: 20px;
+    color: #ffc107;
+    text-shadow: 0 0 15px #ffb300;
+  }
+  p.subtitle {
+    color: #bbb;
+    margin-bottom: 32px;
+    font-size: 1rem;
+  }
+  form {
+    text-align: left;
+  }
+  .input-group {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #ccc;
+    user-select: text;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    border-radius: 8px;
+    border: none;
+    background: #2f2b46;
+    color: #f0f0f0;
+    font-size: 1rem;
+    box-shadow: inset 2px 2px 6px #1a1830, inset -2px -2px 6px #423f55;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    background: #443f66;
+    box-shadow: 0 0 8px #ffb300;
+    outline: none;
+  }
+  .input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #ffc107;
+    opacity: 0.8;
+  }
+  button {
+    width: 100%;
+    background: #ffb300;
+    color: #201f26;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 14px 0;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 6px 14px -2px #ffb300aa;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: #ffca28;
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+  .message {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: #f44336;
+    min-height: 22px;
+    text-align: center;
+  }
+
+  @media (max-width: 400px) {
+    .container {
+      width: 90vw;
+      padding: 30px 25px;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Form Login Prediksi Liga Sepak Bola">
+    <h1>Login</h1>
+    <p class="subtitle">Masukkan username dan password untuk masuk</p>
+    <form id="loginForm" autocomplete="off" onsubmit="event.preventDefault(); handleLogin();">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" placeholder="Username" required aria-required="true" aria-describedby="usernameHelp" />
+        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="Password" required aria-required="true" aria-describedby="passwordHelp" />
+        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a2 2 0 10.001-3.999A2 2 0 0012 17zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zm-7 0V7a3 3 0 016 0v3z"/></svg>
+      </div>
+      <button type="submit" aria-label="Login Button">Masuk</button>
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+
+<script>
+// IndexedDB setup
+let db;
+const request = indexedDB.open("UsersDB", 1);
+
+request.onupgradeneeded = function(event) {
+  db = event.target.result;
+  const objectStore = db.createObjectStore("users", { keyPath: "username" });
+  // Indeks untuk password tidak diperlukan dengan keyPath username sudah unik
+  // Tambahkan user default
+  objectStore.transaction.oncomplete = function() {
+    const userObjectStore = db.transaction("users", "readwrite").objectStore("users");
+    userObjectStore.add({ username: "admin", password: "password" });
+  };
+};
+
+request.onsuccess = function(event) {
+  db = event.target.result;
+  console.log("Database users siap");
+};
+
+request.onerror = function(event) {
+  console.error("Database error: " + event.target.errorCode);
+};
+
+function checkUser(username, password) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(["users"], "readonly");
+    const objectStore = transaction.objectStore("users");
+    const request = objectStore.get(username);
+    request.onsuccess = function(e) {
+      const user = e.target.result;
+      if (user && user.password === password) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    };
+    request.onerror = function() {
+      reject("Gagal ambil data user");
+    };
+  });
+}
+
+async function handleLogin() {
+  const message = document.getElementById('message');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!db) {
+    message.style.color = "#f44336";
+    message.textContent = "Database belum siap, silakan coba lagi sebentar.";
+    return;
+  }
+
+  try {
+    const valid = await checkUser(username, password);
+    if (valid) {
+      message.style.color = '#4caf50';
+      message.textContent = 'Login berhasil! Mengalihkan...';
+      setTimeout(() => {
+        window.location.href = 'prediksi.html';
+      }, 1500);
+    } else {
+      message.style.color = '#f44336';
+      message.textContent = 'Username atau password salah. Silakan coba lagi.';
+    }
+  } catch (error) {
+    message.style.color = '#f44336';
+    message.textContent = 'Terjadi kesalahan: ' + error;
+  }
+}
+</script>
+</body>
+</html>
+
