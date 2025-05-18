@@ -157,6 +157,9 @@ request.onupgradeneeded = function(event) {
   objectStore.transaction.oncomplete = function() {
     const userObjectStore = db.transaction("users", "readwrite").objectStore("users");
     userObjectStore.add({ username: "admin", password: "password" });
+    objectStore.transaction.oncomplete = function() {
+    const userObjectStore = db.transaction("users", "readwrite").objectStore("users");
+    userObjectStore.add({ username: "rama", password: "123" });
   };
 };
 
